@@ -1,0 +1,6 @@
+INFO: System started
+DEBUG: Connection established
+ERROR: Database connection failed
+INFO: User logged in
+ERROR: Permission denied at /etc/config
+DEBUG: Cache cleared
