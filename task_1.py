@@ -24,3 +24,6 @@
 
 sayilar = [12, 5, 8, 19, 3, 20, 2, 14, 7, 6]
 # Görevin: Bu listedeki çift sayıları bulan, karelerini alan ve büyükten küçüğe sıralayan o tek satırlık List Comprehension kodunu yaz.
+
+result = sorted([x**2 for x in sayilar if x%2==0],reverse=True)
+print(result)
