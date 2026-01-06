@@ -4,4 +4,7 @@
 
 first = 'John'
 last = 'Smith'
-print(first + ' [' + last + '] is a coder')
+message = first + ' [' + last + '] is a code '
+msg = f'{first} [{last}] is a coder'
+print (message)
+print (msg)
