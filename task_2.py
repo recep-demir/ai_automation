@@ -1,10 +1,12 @@
 file_path = "server.log"
-error_list = []
+report_file = "error_report.txt"
 search_word = "ERROR"
 
-with open (file_path, "r", encoding="utf-8") as file:
-    for line in file:
+with open(file_path, "r", encoding="utf-8") as reader, \
+     open(report_file, "w", encoding="utf-8") as writer:
+    
+    for line in reader:
         if search_word in line:
-            error_list.append(line.strip())
+            writer.write(line)
 
-print(error_list)
+print("islem tamamlandi:Hatalar ayiklandi.")
