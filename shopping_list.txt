@@ -1,0 +1,4 @@
+egg
+honey
+bread
+milk
