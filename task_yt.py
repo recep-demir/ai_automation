@@ -9,10 +9,19 @@
 # print (message)
 # print (msg)
 
-number = int(input ("Please enter a number : "))
+# number = int(input ("Please enter a number : "))
 
-if number > 10 :
-    print("entered big number")
+# if number > 10 :
+#     print("entered big number")
 
-else :
-    print("entered small number")
+# else :
+#     print("entered small number")
+
+file_path = 'student_records.txt'
+
+with open (file_path, "w", encoding="utf-8") as file:
+    file.write("user Name: John Doe\n")
+    file.write("Department: Computer Science\n")
+
+    additional_info = ["Level:Advanced\n", "Status:Active\n"]
+    file.writelines(additional_info)
