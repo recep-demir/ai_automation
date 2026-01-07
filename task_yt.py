@@ -17,11 +17,15 @@
 # else :
 #     print("entered small number")
 
-file_path = 'student_records.txt'
+file_path = "shopping_list.txt"
 
-with open (file_path, "w", encoding="utf-8") as file:
-    file.write("user Name: John Doe\n")
-    file.write("Department: Computer Science\n")
+with open (file_path,"w", encoding="utf-8") as file:
+    market_list = ["egg\n", "honey\n", "bread\n"]
+    file.writelines(market_list)
 
-    additional_info = ["Level:Advanced\n", "Status:Active\n"]
-    file.writelines(additional_info)
+with open (file_path, "a", encoding="utf-8") as file:
+    file.write("milk\n")
+
+with open (file_path, "r", encoding="utf-8") as file:
+    content = file.read()
+    print(content)
