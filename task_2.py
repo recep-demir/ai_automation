@@ -9,4 +9,4 @@ with open(file_path, "r", encoding="utf-8") as reader, \
         if search_word in line:
             writer.write(line)
 
-print("islem tamamlandi:Hatalar ayiklandi.")
+print("Process completed successfully: Error logs have been extracted.")
