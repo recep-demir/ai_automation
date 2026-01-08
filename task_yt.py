@@ -17,6 +17,7 @@
 # else :
 #     print("entered small number")
 
+
 file_path = "shopping_list.txt"
 
 with open (file_path,"w", encoding="utf-8") as file:
