@@ -1,0 +1,8 @@
+2026-01-09 13:57:11 - MainExplorer - INFO - Attempting to divide 10 by 2
+2026-01-09 13:57:11 - MainExplorer - INFO - Attempting to divide 10 by 0
+2026-01-09 13:57:11 - MainExplorer - ERROR - Division by zero error encountered!
+Traceback (most recent call last):
+  File "/Users/recepdemir/Github/ai_automation/logger.py", line 17, in perform_division
+    result = a / b
+             ~~^~~
+ZeroDivisionError: division by zero
