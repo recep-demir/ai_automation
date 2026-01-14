@@ -1,0 +1,4 @@
+[2023-10-01 10:00] INFO: System started
+[2023-10-01 10:05] ERROR: Database connection failed
+[2023-10-01 10:10] WARNING: High memory usage
+[2023-10-01 10:15] ERROR: Unauthorized access attempt
