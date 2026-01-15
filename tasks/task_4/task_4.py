@@ -13,7 +13,7 @@ try:
 
         is_completed = data["completed"]
 
-        if is_completed == False:
+        if not is_completed:
             print("ALARM: Task not completed!")
 
         else:
