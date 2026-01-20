@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import logging
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -44,7 +45,21 @@ try:
             if "ERROR" in line and match:
                 ip_address = match.group(1)
                 logging.error(f"Crirical Error! Source IP: {ip_address}")
+                def report_ip_to_security(ip,url):
+                    data = {
+                        "detected_ip": ip,
+                        "url": url
+                    
+                    }
+                    try:
+                        response = requests.post(url,json=data)
+                        if response.status_code == 201:
+                            logging.info("Success: IP reported to security team.")
+                        else:
+                            logging.error(f"Failed: API returned status code {response.status_code}")
 
+                    except requests.exceptions.RequestException as e:
+                        logging.error
 
 
 except Exception as e:
