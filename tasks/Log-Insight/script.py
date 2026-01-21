@@ -84,4 +84,4 @@ def process_logs():
         logging.critical(f"Unexpected system error: {e}")
 
 if __name__ == "__main__":
-    process_logs()
+    process_logs() # Executes the main function only if this script is run directly.
