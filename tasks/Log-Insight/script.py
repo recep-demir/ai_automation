@@ -66,6 +66,7 @@ def process_logs():
                 ip_match = re.search(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line)
                 # Regex for Timestamp (YYYY-MM-DD HH:MM:SS)
                 time_match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", line)
+                
 
                 if "ERROR" in line and ip_match:
                     ip_address = ip_match.group(1)
