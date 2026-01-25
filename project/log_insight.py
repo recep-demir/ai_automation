@@ -8,17 +8,33 @@ from datetime import datetime
 
 load_dotenv()
 
+class SecurityLogAnalyzer:
+    def __init__(self, log_file):
+        self.log_file = log_file
+
+        self.api_url = os.getenv("API_URL")
+        self.failed_attempts = {}
+
+        self.total_logs_scanned = 0
+        self.blocked_ips_count = 0
+
+
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)s - %(message)s"
+            )
+        
+    
+
+
+
+
+
+
+"""
 current_location = os.getcwd()
 target_path = os.path.join(current_location,"project","final_error_report.txt")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(target_path),
-        logging.StreamHandler()
-    ]
-)
 
 API_URL = os.getenv("API_URL")
 
@@ -47,4 +63,4 @@ def process_logs():
 
     
 
-
+"""
