@@ -8,15 +8,12 @@ from datetime import datetime
 
 load_dotenv()
 
-class SecurityLogAnalyzer:
-    def __init__(self, log_file):
-        self.log_file = log_file
+class LogParser:
+    def __init__(self, file_path):
+        self.log_file = file_path
 
         self.api_url = os.getenv("API_URL")
-        self.failed_attempts = {}
-
-        self.total_logs_scanned = 0
-        self.blocked_ips_count = 0
+  
 
 
         logging.basicConfig(
