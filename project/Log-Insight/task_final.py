@@ -1,4 +1,5 @@
-import json, os, sys, re, logging, requests, datetime
+import json, os, sys, re, logging, requests
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,9 +20,10 @@ class LogParser:
     def __init__(self, file_name):
         self.log_file = file_name
         self.api_url = os.getenv("API_URL")
+        self.failed_attempts = {}
 
-    def report_ip_to_security(self, ip, url, time):
-        data = {"detected_ip": ip, "occured_at": time, "status": "alert"}
+    def report_ip_to_security(self, ip, url, time, reason):
+        data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert"}
         try:
             response = requests.post(url, json=data, timeout=5)
             if response.status_code in [200, 201]:
@@ -29,7 +31,7 @@ class LogParser:
             else:
                 logging.warning(f"API rejection: {response.status_code}")
         except Exception as e:
-            logging.error(f"Network error: {e}")
+            logging.error(f"Network error:{ip}: {e}")
 
     def process_logs(self):
         alerts = []
@@ -42,35 +44,52 @@ class LogParser:
                     time_match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", line)
                     reason_match = re.search(r" - ([^-]+)$", line)
 
-                    if "ERROR" in line and ip_match:
+                    if "ERROR" in line and ip_match and time_match:
                         timestamp = time_match.group(1) if time_match else "Unknown"
                         ip_address = ip_match.group(1)
                         reason = reason_match.group(1).strip() if reason_match else "Unknown"
-                        time_obj = datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
-                        
+                        current_log_time = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
 
-                        new_entry = {"time": timestamp, "ip": ip_address, "reason": reason}
-                        alerts.append(new_entry)
+                        if not ip_address in self.failed_attempts:
+                            self.failed_attempts[ip_address] = []
 
-                        if self.api_url:
-                            self.report_ip_to_security(ip_address, self.api_url, timestamp)
+                        self.failed_attempts[ip_address].append(current_log_time)
+
+                        if len(self.failed_attempts[ip_address]) >= 5:
+                            first_of_five = self.failed_attempts[ip_address][0]
+                            time_diff = (current_log_time - first_of_five).total_seconds()
+
+                            if time_diff <= 60:
+                                new_entry = {
+                                    "ip": ip_address,
+                                    "first_error": str(first_of_five),
+                                    "last_error": str(current_log_time),
+                                    "total_attempts": len(self.failed_attempts[ip_address]), 
+                                    "reason": reason}
+                                alerts.append(new_entry)
+                                
+                                if self.api_url:
+                                    self.report_ip_to_security(ip_address, self.api_url, timestamp, reason)
+                                
+                                self.failed_attempts[ip_address] = []
+                            else:
+                                self.failed_attempts[ip_address] = [current_log_time]
+
+
+                                  
+
 
 
                             
-
-
                         
 
             with open(JSON_ALERT_FILE, "w", encoding="utf-8") as jf:
                 json.dump(alerts, jf, indent=4, ensure_ascii=False)
             
-            logging.info(f"Found {len(alerts)} alerts. Saved to JSON.")
+            logging.info(f"Analysis complete. Found {len(alerts)} security violations.")
 
         except Exception as e:
             logging.critical(f"System error: {e}")
-
-
-
 
 
 
