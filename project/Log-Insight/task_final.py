@@ -39,9 +39,12 @@ class LogParser:
         try:
             with open(self.log_file, "r", encoding="utf-8") as file:
                 for line in file:
-                    # Regexler
-                    ip_match = re.search(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line)
-                    time_match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", line)
+                    # Tüm verileri tek seferde yakalayan pattern    
+                    LOG_PATTERN = re.compile(r"(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - (?P<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - ERROR - (?P<reason>.*)")
+                    match = LOG_PATTERN.search(line)
+                    if match:
+                        ip_match = match.group("ip")
+                        time_match = match.group("time")
                     reason_match = re.search(r" - ([^-]+)$", line)
 
                     if "ERROR" in line and ip_match and time_match:
