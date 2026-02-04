@@ -11,6 +11,8 @@ JSON_ALERT_FILE = os.path.join(LOG_DIR,"security_alert.json")
 
 os.makedirs(LOG_DIR,exist_ok=True)
 
+
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -18,5 +20,14 @@ logging.basicConfig(
 )
 
 class SecurityLogAnalyer:
-    def __init__(self,)
-        
+    def __init__(self,file_name):
+        self.log_file = file_name
+        self.api_url = os.getenv("API_URL")
+        self.ai_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        self.model_name = "llama-3.1-8b-instant" 
+    
+
+
+
+
+SERVER_LOG_FILE = os.path.join(LOG_DIR, "server_logs.txt")
