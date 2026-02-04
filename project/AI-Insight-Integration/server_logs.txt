@@ -1,0 +1,30 @@
+2026-01-17 10:00:01 - 192.168.1.10 - INFO - User connected
+2026-01-17 10:00:03 - 192.168.1.10 - WARNING - Slow response detected
+2026-01-17 10:00:05 - 192.168.1.10 - ERROR - Unauthorized Access
+2026-01-17 10:00:08 - 192.168.1.10 - INFO - Session refreshed
+2026-01-17 10:00:12 - 192.168.1.10 - ERROR - Login Failed
+2026-01-17 10:00:18 - 192.168.1.10 - ERROR - Login Failed
+2026-01-17 10:00:23 - 192.168.1.10 - ERROR - Token Invalid
+2026-01-17 10:00:29 - 192.168.1.10 - ERROR - Unauthorized Access
+2026-01-17 10:00:34 - 192.168.1.10 - CRITICAL - Multiple Failed Attempts
+
+2026-01-17 10:01:01 - 192.168.1.15 - INFO - User connected
+2026-01-17 10:01:05 - 192.168.1.15 - ERROR - Token Expired
+2026-01-17 10:01:10 - 192.168.1.15 - WARNING - Retry Attempt
+2026.01.17 10:01:14 - 192.168.1.15 - ERROR - Unauthorized Access
+2026-01-17 10:01:20 - 192.168.1.15 - ERROR - Login Failed
+2026-01-17 10:01:27 - 192.168.1.15 - INFO - Session refreshed
+2026-01-17 10:01:33 - 192.168.1.15 - ERROR - Login Failed
+2026-01-17 10:01:39 - 192.168.1.15 - ERROR - Unauthorized Access
+
+2026-01-17 10:02:05 - 10.0.0.5 - INFO - Background job started
+2026-01-17 10:02:12 - 10.0.0.5 - ERROR - Invalid Session
+2026-01-17 10:02:18 - 10.0.0.5 - INFO - Background job completed
+
+2026-01-17 10:03:01 - 172.16.0.20 - INFO - User connected
+2026-01-17 10:03:08 - 172.16.0.20 - ERROR - Login Failed
+2026-01-17 10:03:15 - 172.16.0.20 - WARNING - Suspicious Activity
+2026-01-17 10:03:22 - 172.16.0.20 - ERROR - Login Failed
+2026-01-17 10:03:29 - 172.16.0.20 - ERROR - Login Failed
+2026-01-17 10:03:33 - 172.16.0.20 - ERROR - Unauthorized Access
+2026-01-17 10:03:36 - 172.16.0.20 - CRITICAL - Account Locked
