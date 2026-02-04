@@ -3,3 +3,10 @@
 2026-01-26 16:29:24,218 - ERROR - Usage: python script.py <log_file_path>
 2026-02-04 14:04:19,542 - ERROR - Usage: python script.py <log_file_path>
 2026-02-04 14:33:21,193 - ERROR - Usage: python script.py <log_file_path>
+2026-02-04 14:45:21,545 - ERROR - Usage: python script.py <log_file_path>
+2026-02-04 14:46:02,889 - ERROR - Usage: python script.py <log_file_path>
+2026-02-04 14:48:17,900 - ERROR - Input file not found: /Users/recepdemir/Github/ai_automation/project/Log-Insight/server_log.txt
+2026-02-04 15:42:03,752 - CRITICAL - System error: cannot access local variable 'ip_match' where it is not associated with a value
+2026-02-04 15:46:16,087 - INFO - Reported IP 192.168.1.10 successfully.
+2026-02-04 15:46:16,801 - INFO - Reported IP 192.168.1.15 successfully.
+2026-02-04 15:46:16,805 - INFO - Analysis complete. Found 2 security violations.
