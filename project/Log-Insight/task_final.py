@@ -73,7 +73,6 @@ class LogParser:
                                 if self.api_url:
                                     self.report_ip_to_security(ip_address, self.api_url, timestamp_str, reason)
                                 
-                                # Alert oluştuktan sonra listeyi temizle
                                 self.failed_attempts[ip_address] = []
                             else:
                                 # 60 saniyeyi geçtiyse, eski kayıtları temizle ve güncel hatayı ilk eleman yap
@@ -87,6 +86,9 @@ class LogParser:
 
         except Exception as e:
             logging.error(f"Error: {e}")
+
+
+            
 # 1. Ham log dosyasının yolunu sabit olarak tanımla
 # server_log.txt dosyasının LOG_DIR içinde olduğunu varsayıyoruz
 SERVER_LOG_FILE = os.path.join(LOG_DIR, "server_logs.txt")
@@ -112,11 +114,6 @@ file_name = sys.argv[1]
 if not os.path.exists(file_name):
         logging.error(f"Input file not found: {file_name}")
         sys.exit(1)
-
-
-
-
-
 
 
 
