@@ -8,6 +8,7 @@ load_dotenv()
 LOG_DIR = os.path.join(os.getcwd(), "project", "Log-Insight")
 APP_LOG_FILE = os.path.join(LOG_DIR, "app.log")
 JSON_ALERT_FILE = os.path.join(LOG_DIR, "security_alert.json")
+os.makedirs(LOG_DIR, exist_ok=True)
 
 
 logging.basicConfig(
