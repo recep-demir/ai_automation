@@ -39,7 +39,14 @@ class SecurityLogAnalyer:
                     match = LOG_PATTERN.search(line)
 
                     if match:
-                        
+                        ip_match = match.group("ip")
+                        timestamp_str = match.group("time").replace(".", "-")
+                        reason = match.group("reason").strip()
+
+                        current_log_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+
+
+
           
 
 
