@@ -33,6 +33,22 @@ class SecurityLogAnalyer:
         alerts = []
         LOG_PATTERN = re.compile(r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - (?P<reason>.*)")
 
+        try:
+            with open(self.log_file, "r", encoding="utf-8") as file:
+                for line in file:
+                    match = LOG_PATTERN.search(line)
+
+                    if match:
+                        
+          
+
+
+
+
+
+        except:
+          print('An exception occurred')
+
         
 
 
