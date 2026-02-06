@@ -45,6 +45,18 @@ class SecurityLogAnalyer:
 
                         current_log_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
 
+                        if ip_match not in self.failed_attempts:
+                            self.failed_attempts(ip_match)=[]
+
+                        self.failed_attempts[ip_match].append(current_log_time)
+                        
+                        if len(self.failed_attempts[ip_match]) >=5:
+                            first_of_five = self.failed_attempts[ip_match][0]
+                            time_diff = (current_log_time - first_of_five).total_seconds()
+
+
+
+
 
 
           
