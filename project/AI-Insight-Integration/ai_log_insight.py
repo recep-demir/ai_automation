@@ -31,6 +31,11 @@ class SecurityLogAnalyer:
         self.alerts = []
 
 
+    def report_ip_to_security(self, ip, time, reason):
+        data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert"}
+
+
+
     def process_logs(self):
         LOG_PATTERN = re.compile(r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - (?P<reason>.*)")
 
@@ -68,6 +73,9 @@ class SecurityLogAnalyer:
 
                                 if self.api_url:
                                     self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason)
+                                    self.failed_attempts[ip_match] = []
+                            else:
+                                self.failed_attempts[ip_match] = [current_log_time]
 
 
 
