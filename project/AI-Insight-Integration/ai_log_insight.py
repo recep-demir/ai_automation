@@ -28,14 +28,16 @@ class SecurityLogAnalyer:
         self.failed_attempts = {}
         self.total_scanned = 0
         self.incidents_found = 0
+        self.alerts = []
+
 
     def process_logs(self):
-        alerts = []
         LOG_PATTERN = re.compile(r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - (?P<reason>.*)")
 
         try:
             with open(self.log_file, "r", encoding="utf-8") as file:
                 for line in file:
+                    self.total_scanned +=1
                     match = LOG_PATTERN.search(line)
 
                     if match:
@@ -46,13 +48,25 @@ class SecurityLogAnalyer:
                         current_log_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
 
                         if ip_match not in self.failed_attempts:
-                            self.failed_attempts(ip_match)=[]
+                            self.failed_attempts[ip_match]=[]
 
                         self.failed_attempts[ip_match].append(current_log_time)
                         
                         if len(self.failed_attempts[ip_match]) >=5:
                             first_of_five = self.failed_attempts[ip_match][0]
                             time_diff = (current_log_time - first_of_five).total_seconds()
+
+                            if time_diff <60:
+                                self.alerts.append({
+                                    "ip": ip_match,
+                                    "first_error": str(first_of_five),
+                                    "last_error": str(current_log_time),
+                                    "total_attempts": len(self.failed_attempts[ip_match]), 
+                                    "reason": reason
+                                })
+                                self.incidents_found +=1
+
+
 
 
 
@@ -65,8 +79,7 @@ class SecurityLogAnalyer:
 
 
 
-        except:
-          print('An exception occurred')
+        except Exception as e: print(f"Hata: {e}")
 
         
 
