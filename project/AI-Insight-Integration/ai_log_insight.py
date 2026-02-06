@@ -66,6 +66,9 @@ class SecurityLogAnalyer:
                                 })
                                 self.incidents_found +=1
 
+                                if self.api_url:
+                                    self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason)
+
 
 
 
