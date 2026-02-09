@@ -30,6 +30,26 @@ class SecurityLogAnalyer:
         self.incidents_found = 0
         self.alerts = []
 
+    def analyze_with_ai(self, ip, log_data):
+        try:
+          prompt = f"""
+          IP to be analysed: {ip}
+          Log data: {log_data}
+          Task: Review the logs above. Is this a brute force attack? Briefly (in no more than 2 sentences) state the risk level and your recommendation.
+          """
+
+
+          
+
+
+
+
+
+
+        except:
+          print('An exception occurred')
+
+
 
     def report_ip_to_security(self, ip,url, time, reason):
         data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert"}
