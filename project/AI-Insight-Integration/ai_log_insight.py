@@ -32,25 +32,23 @@ class SecurityLogAnalyer:
 
     def analyze_with_ai(self, ip, log_data):
         try:
-          prompt = f"""
-          IP to be analysed: {ip}
-          Log data: {log_data}
-          Task: Review the logs above. Is this a brute force attack? Briefly (in no more than 2 sentences) state the risk level and your recommendation.
-          """
+          system_prompt = "You are a cyber security expert. Analyze the given logs and respond with ONLY one word: 'CRITICAL' if it's a dangerous infrastructure threat, or 'NORMAL' if it's a minor user error."
+          user_prompt = f"IP: {ip}\nLogs:\n{log_data}"
 
           response = self.ai_client.chat.completions.create(
               model=self.model_name,
               messages=[
-                  {"role": "system", "content": "You are a senior cyber security analyst."},
-                  {"role": "user", "content": prompt}
+                  {"role": "system", "content": system_prompt},
+                  {"role": "user", "content": user_prompt}
               ],
-              temperature=0.5
+              temperature=0.1
           )
-          return response.choices[0].message.content
+          return response.choices[0].message.content.strip().upper()
         
     
         except Exception as e:
-          return f"AI analysis could not be performed: {e}"
+            logging.error(f"AI Analysis Error: {e}")
+            return "ERROR"
 
 
 
@@ -99,32 +97,35 @@ class SecurityLogAnalyer:
                             time_diff = (current_log_time - first_of_five).total_seconds()
 
                             if time_diff <60:
-                                logs_for_ai = "\n".join([line[1] for line in self.failed_attempts[ip_match][-5:] if isinstance(line[1], str)])
-                                ai_result = self.analyze_with_ai(ip_match, logs_for_ai)
+                                logs_for_ai = "\n".join([item[1] for item in self.failed_attempts[ip_match][-5:]])
 
-                                self.alerts.append({
-                                    "ip": ip_match,
-                                    "first_error": str(first_of_five),
-                                    "last_error": str(current_log_time),
-                                    "total_attempts": len(self.failed_attempts[ip_match]), 
-                                    "reason": reason,
-                                    "ai_result": ai_result
-                                })
+                                ai_decision = self.analyze_with_ai(ip_match, logs_for_ai)
 
-                                
-                                self.incidents_found +=1
+                                if "CRITICAL" in ai_decision:
+                                    logging.info(f"AI DETECTED CRITICAL THREAT for IP: {ip_match}")
 
-                                
-                                
+                                    self.alerts.append({
+                                        "ip": ip_match,
+                                        "first_error": str(first_of_five),
+                                        "last_error": str(current_log_time),
+                                        "total_attempts": len(self.failed_attempts[ip_match]), 
+                                        "reason": reason,
+                                        "ai_analysis": ai_decision,
+                                        "status": "CRITICAL"
+                                    })
 
-                                if self.api_url:
-                                    self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason,ai_result)
-                                    self.failed_attempts[ip_match] = []
-                            else:
-                                self.failed_attempts[ip_match] = [(current_log_time,reason)]
+                                    self.incidents_found +=1
+
+                                    if self.api_url:
+                                        self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason,ai_decision)
+                                    
+                                else:
+                                    logging.info(f"AI marked activity as NORMAL for IP: {ip_match}. No action taken.")
+
+                                self.failed_attempts[ip_match] = []
 
 
-            with open (JSON_ALERT_FILE,"a", encoding="utf-8") as jf:
+            with open (JSON_ALERT_FILE,"w", encoding="utf-8") as jf:
                 json.dump(self.alerts, jf, indent=4, ensure_ascii=False)
                 
                 logging.info(f"Analysis complete. Found {len(self.alerts)} security violations.")
