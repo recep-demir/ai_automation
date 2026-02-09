@@ -31,8 +31,22 @@ class SecurityLogAnalyer:
         self.alerts = []
 
 
-    def report_ip_to_security(self, ip, time, reason):
+    def report_ip_to_security(self, ip,url, time, reason):
         data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert"}
+
+        try:
+            response = requests.post(url, json=data, timeout=5)
+
+            if response.status_code in [200,201]:
+                logging.info(f"Reported IP {ip} successfully.")
+            else:
+                logging.warning(f"API rejection: {response.status_code}")
+          
+
+
+        except Exception as e:
+            logging.error(f"Network error:{ip}: {e}")
+
 
 
 
@@ -71,11 +85,18 @@ class SecurityLogAnalyer:
                                 })
                                 self.incidents_found +=1
 
+                                #AI analys
+                                
+
                                 if self.api_url:
                                     self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason)
                                     self.failed_attempts[ip_match] = []
                             else:
                                 self.failed_attempts[ip_match] = [current_log_time]
+
+
+            with open (JSON_ALERT_FILE,"w", encoding="utf-8") as jf:
+                json.dump(self.alerts, jf, indent=4, ensure_ascii=False)
 
 
 
