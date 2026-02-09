@@ -38,16 +38,19 @@ class SecurityLogAnalyer:
           Task: Review the logs above. Is this a brute force attack? Briefly (in no more than 2 sentences) state the risk level and your recommendation.
           """
 
-
-          
-
-
-
-
-
-
-        except:
-          print('An exception occurred')
+          response = self.ai_client.chat.completions.create(
+              model=self.model_name,
+              messages=[
+                  {"role": "system", "content": "You are a senior cyber security analyst."},
+                  {"role": "user", "content": prompt}
+              ],
+              temperature=0.5
+          )
+          return response.choices[0].message.content
+        
+    
+        except Exception as e:
+          return f"AI analysis could not be performed: {e}"
 
 
 
@@ -105,7 +108,7 @@ class SecurityLogAnalyer:
                                 })
                                 self.incidents_found +=1
 
-                                #AI analys
+                                
                                 
 
                                 if self.api_url:
