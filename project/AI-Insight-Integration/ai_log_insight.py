@@ -54,8 +54,8 @@ class SecurityLogAnalyer:
 
 
 
-    def report_ip_to_security(self, ip,url, time, reason):
-        data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert"}
+    def report_ip_to_security(self, ip,url, time, reason,ai):
+        data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert", "ai_result": ai}
 
         try:
             response = requests.post(url, json=data, timeout=5)
@@ -106,13 +106,22 @@ class SecurityLogAnalyer:
                                     "total_attempts": len(self.failed_attempts[ip_match]), 
                                     "reason": reason
                                 })
+
+                                logs_for_ai = "\n".join([line for line in self.failed_attempts[ip_match][-5:] if isinstance(line, str)])
+                                ai_result = self.analyze_with_ai(ip_match, logs_for_ai)
+
+
+
+
+
+
                                 self.incidents_found +=1
 
                                 
                                 
 
                                 if self.api_url:
-                                    self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason)
+                                    self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason,ai_result)
                                     self.failed_attempts[ip_match] = []
                             else:
                                 self.failed_attempts[ip_match] = [current_log_time]
