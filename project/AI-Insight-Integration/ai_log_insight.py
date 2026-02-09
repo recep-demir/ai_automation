@@ -92,29 +92,26 @@ class SecurityLogAnalyer:
                         if ip_match not in self.failed_attempts:
                             self.failed_attempts[ip_match]=[]
 
-                        self.failed_attempts[ip_match].append(current_log_time)
+                        self.failed_attempts[ip_match].append((current_log_time, reason))
                         
                         if len(self.failed_attempts[ip_match]) >=5:
-                            first_of_five = self.failed_attempts[ip_match][0]
+                            first_of_five = self.failed_attempts[ip_match][0][0]
                             time_diff = (current_log_time - first_of_five).total_seconds()
 
                             if time_diff <60:
+                                logs_for_ai = "\n".join([line[1] for line in self.failed_attempts[ip_match][-5:] if isinstance(line[1], str)])
+                                ai_result = self.analyze_with_ai(ip_match, logs_for_ai)
+
                                 self.alerts.append({
                                     "ip": ip_match,
                                     "first_error": str(first_of_five),
                                     "last_error": str(current_log_time),
                                     "total_attempts": len(self.failed_attempts[ip_match]), 
-                                    "reason": reason
+                                    "reason": reason,
+                                    "ai_result": ai_result
                                 })
 
-                                logs_for_ai = "\n".join([line for line in self.failed_attempts[ip_match][-5:] if isinstance(line, str)])
-                                ai_result = self.analyze_with_ai(ip_match, logs_for_ai)
-
-
-
-
-
-
+                                
                                 self.incidents_found +=1
 
                                 
@@ -124,30 +121,18 @@ class SecurityLogAnalyer:
                                     self.report_ip_to_security(ip_match, self.api_url, timestamp_str, reason,ai_result)
                                     self.failed_attempts[ip_match] = []
                             else:
-                                self.failed_attempts[ip_match] = [current_log_time]
+                                self.failed_attempts[ip_match] = [(current_log_time,reason)]
 
 
-            with open (JSON_ALERT_FILE,"w", encoding="utf-8") as jf:
+            with open (JSON_ALERT_FILE,"a", encoding="utf-8") as jf:
                 json.dump(self.alerts, jf, indent=4, ensure_ascii=False)
+                
+                logging.info(f"Analysis complete. Found {len(self.alerts)} security violations.")
 
 
 
 
-
-
-
-
-          
-
-
-
-
-
-        except Exception as e: print(f"Hata: {e}")
-
-        
-
-
+        except Exception as e: logging.error(f"Hata: {e}")
 
     
 
