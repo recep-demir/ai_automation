@@ -19,7 +19,7 @@ logging.basicConfig(
     handlers=[logging.FileHandler(APP_LOG_FILE), logging.StreamHandler()]
 )
 
-class SecurityLogAnalyer:
+class SecurityLogAnalyzer:
     def __init__(self,file_name):
         self.log_file = file_name
         self.api_url = os.getenv("API_URL")
@@ -97,6 +97,7 @@ class SecurityLogAnalyer:
                             time_diff = (current_log_time - first_of_five).total_seconds()
 
                             if time_diff <60:
+
                                 logs_for_ai = "\n".join([item[1] for item in self.failed_attempts[ip_match][-5:]])
 
                                 ai_decision = self.analyze_with_ai(ip_match, logs_for_ai)
@@ -123,6 +124,8 @@ class SecurityLogAnalyer:
                                     logging.info(f"AI marked activity as NORMAL for IP: {ip_match}. No action taken.")
 
                                 self.failed_attempts[ip_match] = []
+                            else:
+                                self.failed_attempts[ip_match]
 
 
             with open (JSON_ALERT_FILE,"w", encoding="utf-8") as jf:
@@ -147,5 +150,5 @@ if not os.path.exists(SERVER_LOG_FILE):
     sys.exit(1)
 
 
-analyzer = SecurityLogAnalyer(SERVER_LOG_FILE)
+analyzer = SecurityLogAnalyzer(SERVER_LOG_FILE)
 analyzer.process_logs()
