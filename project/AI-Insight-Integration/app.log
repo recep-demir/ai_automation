@@ -1,0 +1,7 @@
+2026-02-09 16:27:02,046 - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-09 16:27:02,060 - INFO - AI DETECTED CRITICAL THREAT for IP: 192.168.1.10
+2026-02-09 16:27:03,414 - INFO - Reported IP 192.168.1.10 successfully.
+2026-02-09 16:27:08,394 - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-09 16:27:08,396 - INFO - AI DETECTED CRITICAL THREAT for IP: 192.168.1.15
+2026-02-09 16:27:08,861 - INFO - Reported IP 192.168.1.15 successfully.
+2026-02-09 16:27:08,865 - INFO - Analysis complete. Found 2 security violations.
