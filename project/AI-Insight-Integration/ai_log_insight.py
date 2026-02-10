@@ -125,7 +125,8 @@ class SecurityLogAnalyzer:
 
                                 self.failed_attempts[ip_match] = []
                             else:
-                                self.failed_attempts[ip_match]
+                                self.failed_attempts[ip_match].pop(0)
+
 
 
             with open (JSON_ALERT_FILE,"w", encoding="utf-8") as jf:
