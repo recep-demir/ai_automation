@@ -1,0 +1,20 @@
+[
+    {
+        "ip": "192.168.1.10",
+        "first_error": "2026-01-17 10:00:05",
+        "last_error": "2026-01-17 10:00:29",
+        "total_attempts": 5,
+        "reason": "Unauthorized Access",
+        "ai_analysis": "CRITICAL",
+        "status": "CRITICAL"
+    },
+    {
+        "ip": "192.168.1.15",
+        "first_error": "2026-01-17 10:01:05",
+        "last_error": "2026-01-17 10:01:39",
+        "total_attempts": 5,
+        "reason": "Unauthorized Access",
+        "ai_analysis": "CRITICAL",
+        "status": "CRITICAL"
+    }
+]
