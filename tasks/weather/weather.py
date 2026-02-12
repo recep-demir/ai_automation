@@ -37,11 +37,9 @@ tools = [
                 "required": ["city"]
             }
         
-
         }
     }
 ]
-
 
 def run_poc():
     user_prompt = "İstanbul'da hava nasıl?"
