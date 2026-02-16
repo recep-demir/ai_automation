@@ -45,11 +45,10 @@ def run_poc():
     model_name = "llama-3.3-70b-versatile"
     user_prompt = "Şu anki güncel veriye göre İstanbul'da hava durumu nedir?"
 
-
     messages = [
         {
             "role": "system", 
-            "content": "You are a helpful assistant. Use the provided tools to answer questions. If a tool returns data, use that specific data in your final answer."
+            "content": "You are a factual assistant. Use the provided tool outputs strictly to answer questions."
         },
         {
             "role": "user",
@@ -57,8 +56,9 @@ def run_poc():
         }
     ]
 
+    # Step 1: Initial Request
     response = client.chat.completions.create(
-        model= model_name,
+        model=model_name,
         messages=messages,
         tools=tools,
         tool_choice="auto"
@@ -68,21 +68,18 @@ def run_poc():
     tool_calls = response_message.tool_calls
 
     if tool_calls:
-        print("AI: 'I need to call a function to answer this.'")
-
+        # 1. ÖNEMLİ: Assistant'ın tool_call mesajını geçmişe BİR KEZ ekle.
         messages.append(response_message)
 
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_args = json.loads(tool_call.function.arguments)
 
-            print(f"Calling Function: {function_name} with arguments: {function_args}")
-
             if function_name == "get_weather":
-                function_response = get_weather(
-                    city=function_args.get("city")
-                )
-                messages.append(response_message) # Add the model's call request to history
+                # 2. Fonksiyonu çalıştır
+                function_response = get_weather(city=function_args.get("city"))
+                
+                # 3. ÖNEMLİ: Sadece tool sonucunu ekle (response_message'ı tekrar ekleme!)
                 messages.append({
                     "tool_call_id": tool_call.id,
                     "role": "tool",
@@ -90,20 +87,17 @@ def run_poc():
                     "content": function_response
                 })
 
-
+        # Step 2: Final Request with all information
         final_response = client.chat.completions.create(
             model=model_name,
             messages=messages,
-            temperature=0
+            temperature=0 # Gerçekçi ve net sonuç için 0
         )
         
         print("\nFinal AI Answer:")
         print(final_response.choices[0].message.content)
-
     else:
         print(response_message.content)
-
-
 
 run_poc()
 
