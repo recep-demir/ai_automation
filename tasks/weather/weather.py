@@ -8,7 +8,7 @@ load_dotenv()
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
-model_name = "llama-3.3-70b-versatile"
+
 
 def get_weather(city):
 
@@ -42,10 +42,15 @@ tools = [
 ]
 
 def run_poc():
-    user_prompt = "İstanbul'da hava nasıl?"
+    model_name = "llama-3.3-70b-versatile"
+    user_prompt = "Şu anki güncel veriye göre İstanbul'da hava durumu nedir?"
 
 
     messages = [
+        {
+            "role": "system", 
+            "content": "You are a helpful assistant. Use the provided tools to answer questions. If a tool returns data, use that specific data in your final answer."
+        },
         {
             "role": "user",
             "content": user_prompt
@@ -64,6 +69,8 @@ def run_poc():
 
     if tool_calls:
         print("AI: 'I need to call a function to answer this.'")
+
+        messages.append(response_message)
 
         for tool_call in tool_calls:
             function_name = tool_call.function.name
@@ -85,8 +92,9 @@ def run_poc():
 
 
         final_response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages
+            model=model_name,
+            messages=messages,
+            temperature=0
         )
         
         print("\nFinal AI Answer:")
