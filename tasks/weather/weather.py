@@ -67,6 +67,9 @@ def run_poc():
 
     response_message = response.choices[0].message
     tool_calls = response_message.tool_calls
+    print("\n--- [RAW TOOL CALLS DATA] ---")
+    print(json.dumps(tool_calls, indent=2, default=str))
+
 
     if tool_calls:
         print("AI: 'Bir araca (Tool) ihtiyacım var.'")
@@ -77,7 +80,7 @@ def run_poc():
 
         for tool_call in tool_calls:
             function_name = tool_call.function.name
-            function_args = json.loads(tool_call.function.arguments)
+            function_args = json.loads(tool_call.function.arguments) # json.loads: AI, argümanları (parametreleri) bize bir String (Metin) olarak gönderir. Ancak Python'da bu verileri kullanabilmek için onları bir Dictionary (Sözlük) yapısına çevirmemiz gerekir. Bu işleme Deserialization denir.
             
             print(f"Calling Function: {function_name} with args: {function_args}")
 
