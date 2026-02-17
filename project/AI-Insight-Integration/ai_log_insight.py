@@ -34,6 +34,29 @@ class SecurityLogAnalyzer:
     def block_ip_on_firewall(self,ip):
         logging.warning(f"🛡️ [FIREWALL ACTION] IP {ip} has been blocked successfully.")
         return f"IP {ip} is now restricted."
+    
+
+    tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "block_ip_on_firewall",
+                "description": "Blocks a specific IP address on the system firewall if brute force or malicious activity is confirmed.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "ip": {
+                            "type": "string",
+                            "description": "The IP address to be blocked."
+                        }
+                    },
+                    "required": ["ip"]
+                }
+            }
+        }
+    ]
+    
+
 
     def analyze_with_ai(self, ip, log_data):
         try:
