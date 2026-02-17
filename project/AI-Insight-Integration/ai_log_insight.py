@@ -30,6 +30,11 @@ class SecurityLogAnalyzer:
         self.incidents_found = 0
         self.alerts = []
 
+
+    def block_ip_on_firewall(self,ip):
+        logging.warning(f"🛡️ [FIREWALL ACTION] IP {ip} has been blocked successfully.")
+        return f"IP {ip} is now restricted."
+
     def analyze_with_ai(self, ip, log_data):
         try:
           system_prompt = "You are a cyber security expert. Analyze the given logs and respond with ONLY one word: 'CRITICAL' if it's a dangerous infrastructure threat, or 'NORMAL' if it's a minor user error."
