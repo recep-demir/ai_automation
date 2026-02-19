@@ -3,6 +3,7 @@ from groq import Groq
 from datetime import datetime
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 LOG_DIR = os.path.join(os.getcwd(),"project","AI-Insight-Integration")
@@ -36,43 +37,59 @@ class SecurityLogAnalyzer:
         return f"IP {ip} is now restricted."
     
 
-    tools = [
-        {
-            "type": "function",
-            "function": {
-                "name": "block_ip_on_firewall",
-                "description": "Blocks a specific IP address on the system firewall if brute force or malicious activity is confirmed.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "ip": {
-                            "type": "string",
-                            "description": "The IP address to be blocked."
-                        }
-                    },
-                    "required": ["ip"]
-                }
-            }
-        }
-    ]
     
 
-
     def analyze_with_ai(self, ip, log_data):
+
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "block_ip_on_firewall", 
+                    "description": "Blocks an IP address if brute force activity is detected.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "ip": {"type": "string", "description": "The IP to block"}
+                        },
+                        "required": ["ip"]
+                    }
+                }
+            }
+        ]
+        
         try:
-          system_prompt = "You are a cyber security expert. Analyze the given logs and respond with ONLY one word: 'CRITICAL' if it's a dangerous infrastructure threat, or 'NORMAL' if it's a minor user error."
-          user_prompt = f"IP: {ip}\nLogs:\n{log_data}"
+          system_prompt = "You are a strict Security Automated System. Your ONLY task is to decide if the logs indicate a brute force attack. If you detect a brute force attack, you MUST call the 'block_ip_on_firewall' function with the offending IP. Do NOT provide any explanations or say you cannot access data. If the logs do not indicate a brute force attack, simply respond with 'NORMAL'."
+          
+          user_prompt = f"Analyze these logs for IP {ip}:\n{log_data}"
+
+          messages = [
+              {"role": "system", "content": system_prompt},
+              {"role": "user", "content": user_prompt}
+          ]
 
           response = self.ai_client.chat.completions.create(
               model=self.model_name,
-              messages=[
-                  {"role": "system", "content": system_prompt},
-                  {"role": "user", "content": user_prompt}
-              ],
+              messages=messages,
+              tools=tools,
+              tool_choice="auto",
               temperature=0.1
           )
-          return response.choices[0].message.content.strip().upper()
-        
+          
+          response_message = response.choices[0].message
+          tool_calls = response_message.tool_calls
+
+          if tool_calls:
+              for tool_call in tool_calls:
+                
+                function_name = tool_call.function.name
+                function_args = json.loads(tool_call.function.arguments)
+
+                if function_name == "block_ip_on_firewall":
+                    result = self.block_ip_on_firewall(ip=function_args.get("ip"))
+                    return f"CRITICAL - AI ACTION: {result}"
+                
+          return "NORMAL - No tool call requested by AI."
     
         except Exception as e:
             logging.error(f"AI Analysis Error: {e}")
