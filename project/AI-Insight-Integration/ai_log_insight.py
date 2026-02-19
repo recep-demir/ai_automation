@@ -32,7 +32,7 @@ class SecurityLogAnalyzer:
 
 
     def block_ip_on_firewall(self,ip):
-        logging.warning(f"🛡️ [FIREWALL ACTION] IP {ip} has been blocked successfully.")
+        logging.info(f"🛡️ [FIREWALL ACTION] IP {ip} has been blocked successfully.")
         return f"IP {ip} is now restricted."
     
 
