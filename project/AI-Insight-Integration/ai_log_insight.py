@@ -60,7 +60,7 @@ class SecurityLogAnalyzer:
         
         try:
           system_prompt = "You are a strict Security Automated System. Your ONLY task is to decide if the logs indicate a brute force attack. If you detect a brute force attack, you MUST call the 'block_ip_on_firewall' function with the offending IP. Do NOT provide any explanations or say you cannot access data. If the logs do not indicate a brute force attack, simply respond with 'NORMAL'."
-          
+
           user_prompt = f"Analyze these logs for IP {ip}:\n{log_data}"
 
           messages = [
@@ -185,9 +185,6 @@ class SecurityLogAnalyzer:
         except Exception as e: logging.error(f"Hata: {e}")
 
     
-
-
-
 
 SERVER_LOG_FILE = os.path.join(LOG_DIR, "server_logs.txt")
 
