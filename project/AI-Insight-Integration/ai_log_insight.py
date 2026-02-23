@@ -3,7 +3,6 @@ from groq import Groq
 from datetime import datetime
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 LOG_DIR = os.path.join(os.getcwd(),"project","AI-Insight-Integration")
@@ -11,8 +10,6 @@ APP_LOG_FILE = os.path.join(LOG_DIR,"app.log")
 JSON_ALERT_FILE = os.path.join(LOG_DIR,"security_alert.json")
 
 os.makedirs(LOG_DIR,exist_ok=True)
-
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -31,14 +28,10 @@ class SecurityLogAnalyzer:
         self.incidents_found = 0
         self.alerts = []
 
-
     def block_ip_on_firewall(self,ip):
         logging.info(f"🛡️ [FIREWALL ACTION] IP {ip} has been blocked successfully.")
         return f"IP {ip} is now restricted."
     
-
-    
-
     def analyze_with_ai(self, ip, log_data):
 
         tools = [
@@ -95,8 +88,6 @@ class SecurityLogAnalyzer:
             logging.error(f"AI Analysis Error: {e}")
             return "ERROR"
 
-
-
     def report_ip_to_security(self, ip,url, time, reason,ai):
         data = {"detected_ip": ip, "occured_at": time,"reason" : reason, "status": "alert", "ai_result": ai}
 
@@ -108,13 +99,8 @@ class SecurityLogAnalyzer:
             else:
                 logging.warning(f"API rejection: {response.status_code}")
           
-
-
         except Exception as e:
             logging.error(f"Network error:{ip}: {e}")
-
-
-
 
     def process_logs(self):
         LOG_PATTERN = re.compile(r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - (?P<reason>.*)")
@@ -173,18 +159,13 @@ class SecurityLogAnalyzer:
                                 self.failed_attempts[ip_match].pop(0)
 
 
-
             with open (JSON_ALERT_FILE,"w", encoding="utf-8") as jf:
                 json.dump(self.alerts, jf, indent=4, ensure_ascii=False)
                 
                 logging.info(f"Analysis complete. Found {len(self.alerts)} security violations.")
 
-
-
-
         except Exception as e: logging.error(f"Hata: {e}")
 
-    
 
 SERVER_LOG_FILE = os.path.join(LOG_DIR, "server_logs.txt")
 
