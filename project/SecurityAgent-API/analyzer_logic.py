@@ -32,7 +32,7 @@ class SecurityLogAnalyzer:
                 }
             }
         ]
-        system_prompt = "You are a strict Security Automated System. Your ONLY task is to decide if the logs indicate a brute force attack. If you detect a brute force attack, you MUST call the 'block_ip_on_firewall' function with the offending IP. Do NOT provide any explanations or say you cannot access data. If the logs do not indicate a brute force attack, simply respond with 'NORMAL'."
+        system_prompt = "You are a Security AI. Decide if logs indicate brute force. If yes, call 'block_ip_on_firewall'. Else, reply 'NORMAL'."
 
         
         try:
