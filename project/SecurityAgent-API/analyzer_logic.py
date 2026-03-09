@@ -27,11 +27,11 @@ class SecurityLogAnalyzer:
                 "type": "function",
                 "function": {
                     "name": "block_ip_on_firewall",
-                    "description": "Blocks an IP if brute force is detected.",
+                    "description": "Blocks an IP address if brute force activity is detected.",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "ip": {"type": "string"}
+                            "ip": {"type": "string", "description": "The IP to block"}
                         },
                         "required": ["ip"]
                     }
@@ -39,7 +39,13 @@ class SecurityLogAnalyzer:
             }
         ]
         
-        system_prompt = "You are a Security AI. Decide if logs indicate brute force. If yes, call 'block_ip_on_firewall'. Else, reply 'NORMAL'."
+        system_prompt = (
+        "You are a strict Security Automated System. Your ONLY task is to decide "
+        "if the logs indicate a brute force attack. If you detect an attack, "
+        "you MUST ONLY use the 'block_ip_on_firewall' tool. "
+        "DO NOT invent or attempt to call any other functions. "
+        "If no attack is detected, respond with 'NORMAL'."
+    )
         
         try:
             # Groq Python client is typically sync, but we treat it as part of our async flow
@@ -51,6 +57,7 @@ class SecurityLogAnalyzer:
                 ],
                 tools=tools,
                 tool_choice="auto"
+                temperature=0.0
             )
             
             response_message = response.choices[0].message
