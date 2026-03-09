@@ -13,6 +13,8 @@ security_agent = SecurityLogAnalyzer()
 class LogData(BaseModel):
     lines: List[str]
 
+    
+
 @app.post("/analyze")
 async def analyze_endpoint(data: LogData):
     try:
