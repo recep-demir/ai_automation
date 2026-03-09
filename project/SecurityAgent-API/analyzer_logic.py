@@ -56,7 +56,7 @@ class SecurityLogAnalyzer:
                     {"role": "user", "content": f"IP: {ip}\nLogs:\n{log_data}"}
                 ],
                 tools=tools,
-                tool_choice="auto"
+                tool_choice="auto",
                 temperature=0.0
             )
             
