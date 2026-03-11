@@ -1,0 +1,8 @@
+COMPANY_POLICY_ID: 2024-SEC-01
+Rule 101: The IP address 192.168.1.1 is our main gateway device. Errors originating from this IP must never be blocked automatically, regardless of their severity. In such cases, the system should only send an email to admin@security-it.ch with the subject line "GATEWAY_ALERT".
+
+Rule 202: If a "Database Connection Error" message is detected, the system must automatically trigger the 'db_monitor' tool and perform a database health check.
+
+Rule 303: Any IP addresses confirmed for suspected Brute Force attacks (defined as 5+ errors within 60 seconds) must be quarantined for 24 hours via the firewall.
+
+Rule 404: For IP addresses in the 10.0.0.x block, which belong to internal development servers, the system should only perform logging. No blocking or restrictive actions should be taken.
