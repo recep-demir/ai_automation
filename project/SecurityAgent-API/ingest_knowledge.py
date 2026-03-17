@@ -6,3 +6,13 @@ from langchain_community.vectorstores import Chroma
 
 SOURCE_FILE = "it_policy.txt"
 PERSIST_DIRECTORY = "./chroma_db"
+
+def run_ingestion():
+
+    if not os.path.exists(SOURCE_FILE):
+        print(f"Source file '{SOURCE_FILE}' not found. Please ensure it exists.")
+        return
+    
+    loader = TextLoader(SOURCE_FILE, encoding="utf-8")
+    documents = loader.load()
+    print(f"Successfully loaded {len(documents)} document(s).")
