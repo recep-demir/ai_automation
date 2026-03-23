@@ -1,2 +1,0 @@
-Line2 [2023-10-01 10:05] ERROR: Database connection failed
-Line4 [2023-10-01 10:15] ERROR: Unauthorized access attempt
