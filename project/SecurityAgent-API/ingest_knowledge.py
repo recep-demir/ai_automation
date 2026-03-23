@@ -17,6 +17,7 @@ def run_ingestion():
     documents = loader.load()
     print(f"Successfully loaded {len(documents)} document(s).")
 
-    text_splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50)
+    text_splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50) // 
     docs = text_splitter.split_documents(documents)
     print(f"Documents split into {len(docs)} chunks.")
+
