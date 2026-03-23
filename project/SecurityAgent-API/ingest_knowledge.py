@@ -4,6 +4,10 @@ from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 logging.basicConfig(
@@ -41,7 +45,7 @@ def run_ingestion():
 
 
         logging.info("Initializing HuggingFace Embedding Model...")
-        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        embeddings = HuggingFaceEmbeddings(model_name=os.getenv("EMBEDDING_MODEL"))
 
         logging.info("Creating Vector Database in progress...")
         vectorstore = Chroma.from_documents(
