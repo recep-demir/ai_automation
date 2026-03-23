@@ -29,6 +29,27 @@ def run_retrieval(query):
         )
 
 
+        logging.info(f"Searching for query: {query}")
+        results = vectorstore.similarity_search(query, k=2)
+
+        if not results:
+            logging.warning("No relevant documents found.")
+            return
+        
+        logging.info("--- Search Results ---")
+        for i, doc in enumerate(results):
+            logging.info(f"Result {i+1}:")
+            logging.info(f"Content: {doc.page_content}")
+            logging.info("-" * 20)
+        
+
+
     except Exception as e:
         logging.error(f"An error occurred during retrieval: {str(e)}")
         return []
+    
+
+if __name__ == "__main__":
+    user_query = input("Please enter your technical issue or question: ")
+    if user_query:
+        run_retrieval(user_query)
