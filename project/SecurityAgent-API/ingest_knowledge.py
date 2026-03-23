@@ -32,6 +32,9 @@ def run_ingestion():
         persist_directory=PERSIST_DIRECTORY
     )
 
+    print(f"Success! Knowledge base created at {PERSIST_DIRECTORY}")
 
-    
+
+    if __name__ == "__main__":
+        run_ingestion()
 
