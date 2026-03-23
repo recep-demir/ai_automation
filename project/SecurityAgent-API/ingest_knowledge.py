@@ -21,3 +21,10 @@ def run_ingestion():
     docs = text_splitter.split_documents(documents)
     print(f"Documents split into {len(docs)} chunks.")
 
+
+    print("Initializing Embedding Model (this may take a moment)...")
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+
+    
+
