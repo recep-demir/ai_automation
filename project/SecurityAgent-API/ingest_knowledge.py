@@ -4,7 +4,7 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
-SOURCE_FILE = "it_policy.txt"
+SOURCE_FILE = "./it_policy.txt"
 PERSIST_DIRECTORY = "./chroma_db"
 
 def run_ingestion():
@@ -17,7 +17,7 @@ def run_ingestion():
     documents = loader.load()
     print(f"Successfully loaded {len(documents)} document(s).")
 
-    text_splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50) // 
+    text_splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50)
     docs = text_splitter.split_documents(documents)
     print(f"Documents split into {len(docs)} chunks.")
 
@@ -35,6 +35,7 @@ def run_ingestion():
     print(f"Success! Knowledge base created at {PERSIST_DIRECTORY}")
 
 
-    if __name__ == "__main__":
-        run_ingestion()
+
+if __name__ == "__main__":
+    run_ingestion()
 
