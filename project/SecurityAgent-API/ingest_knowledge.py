@@ -25,6 +25,13 @@ def run_ingestion():
     print("Initializing Embedding Model (this may take a moment)...")
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
+    print("Creating Vector Database and saving to disk...")
+    vectorstore = Chroma.from_documents(
+        documents=docs,
+        embedding=embeddings,
+        persist_directory=PERSIST_DIRECTORY
+    )
+
 
     
 
