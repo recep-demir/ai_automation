@@ -4,12 +4,11 @@ from datetime import datetime
 
 class SecurityLogAnalyzer:
     def __init__(self):
-        # Initializing core components
         self.ai_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         self.model_name = "llama-3.1-8b-instant"
         
         # State tracking (In-memory storage for brute force detection)
-        self.failed_attempts = {} # Key: IP, Value: List of (timestamp, reason)
+        self.failed_attempts = {} 
         self.total_scanned = 0
         self.incidents_found = 0
 
