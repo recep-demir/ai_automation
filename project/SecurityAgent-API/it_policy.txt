@@ -6,3 +6,5 @@ Rule 202: If a "Database Connection Error" message is detected, the system must 
 Rule 303: Any IP addresses confirmed for suspected Brute Force attacks (defined as 5+ errors within 60 seconds) must be quarantined for 24 hours via the firewall.
 
 Rule 404: For IP addresses in the 10.0.0.x block, which belong to internal development servers, the system should only perform logging. No blocking or restrictive actions should be taken.
+
+Rule 505: If a brute force attack is detected (more than 5 failed logins per minute), the Security Agent must block the source IP address immediately via the firewall.
