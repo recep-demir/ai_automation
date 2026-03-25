@@ -19,6 +19,16 @@ logging.basicConfig(
     ]
 )
 
+def validate_config():
+    required_vars = ["EMBEDDING_MODEL"]
+    for var in required_vars:
+        if not os.getenv(var):
+            logging.critical(f"Environment variable '{var}' is missing! System exiting.")
+            raise EnvironmentError(f"Missing required configuration: {var}")
+
+
+validate_config()
+
 SOURCE_FILE = "./it_policy.txt"
 PERSIST_DIRECTORY = "./chroma_db"
 
