@@ -1,6 +1,6 @@
 import os
 import logging
-from typing import List, Optional
+from typing import Any, List, Dict
 from groq import Groq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
@@ -37,7 +37,8 @@ vectorstore_engine = Chroma(
 )
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def get_ai_support(query: str) -> str:
+
+def get_ai_support(query: str) -> Dict[str, Any]:
     
     try:
 
@@ -51,7 +52,13 @@ def get_ai_support(query: str) -> str:
                 "sources": []
             }
 
-        retrieved_context = "\n---\n".join([doc.page_content for doc in search_results])
+        retrieved_context = ""
+        sources = set() # Use a set to avoid duplicate source names
+
+        for doc in search_results:
+            retrieved_context += f"{doc.page_content}\n---\n"
+            source_file = doc.metadata.get("source", "Unknown Source")
+            sources.add(os.path.basename(source_file))
 
         system_message = (
             "You are a Senior IT Support Specialist. "
