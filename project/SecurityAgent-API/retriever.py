@@ -26,33 +26,33 @@ def validate_environment():
             logging.critical(f"Environment Variable Error: {key} is not set.")
             raise EnvironmentError(f"Missing configuration for {key}")
 
-def get_ai_support(query: str) -> str:
-    """
-    Retrieves relevant context from ChromaDB and synthesizes an answer using Groq.
-    """
-    try:
-        validate_environment()
+validate_environment()
 
-        embeddings = HuggingFaceEmbeddings(model_name=os.getenv("EMBEDDING_MODEL"))
-        
-        logging.info("Connecting to ChromaDB...")
-        vectorstore = Chroma(
-            persist_directory=PERSIST_DIRECTORY,
-            embedding_function=embeddings
-        )
+logging.info("Initializing Embedding Model and Vectorstore...")
+
+embeddings_model = HuggingFaceEmbeddings(model_name=os.getenv("EMBEDDING_MODEL"))
+vectorstore_engine = Chroma(
+    persist_directory=PERSIST_DIRECTORY,
+    embedding_function=embeddings_model
+)
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+def get_ai_support(query: str) -> str:
+    
+    try:
 
         logging.info(f"Retrieving context for query: {query}")
 
-        search_results = vectorstore.similarity_search(query, k=3)
+        search_results = vectorstore_engine.similarity_search(query, k=3)
         
         if not search_results:
-            return "I couldn't find any relevant company policy regarding this issue."
+            return {
+                "answer": "I couldn't find any relevant company policy regarding this issue.",
+                "sources": []
+            }
 
         retrieved_context = "\n---\n".join([doc.page_content for doc in search_results])
 
-
-        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        
         system_message = (
             "You are a Senior IT Support Specialist. "
             "Use ONLY the following context to answer the user's question. "
@@ -63,7 +63,7 @@ def get_ai_support(query: str) -> str:
         )
 
         logging.info("Generating response with Groq (Llama-3)...")
-        chat_completion = client.chat.completions.create(
+        chat_completion = groq_client.chat.completions.create(
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": f"Issue: {query}"}
