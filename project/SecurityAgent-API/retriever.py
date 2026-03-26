@@ -79,7 +79,10 @@ def get_ai_support(query: str) -> Dict[str, Any]:
             temperature=0.1  
         )
 
-        return chat_completion.choices[0].message.content
+        return {
+            "answer": chat_completion.choices[0].message.content,
+            "sources": list(sources)
+        }
 
     except Exception as e:
         logging.error(f"RAG Synthesis Error: {str(e)}")
