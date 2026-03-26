@@ -94,5 +94,9 @@ def get_ai_support(query: str) -> Dict[str, Any]:
 if __name__ == "__main__":
     test_query = "What should I do if a brute force attack is detected?"
     print("\n--- AI SUPPORT RESPONSE ---")
-    response = get_ai_support(test_query)
-    print(response)
+
+    result = get_ai_support(test_query)
+    
+    print(f"RESPONSE: {result['answer']}")
+    print("-" * 30)
+    print(f"SOURCES USED: {result['sources']}")
