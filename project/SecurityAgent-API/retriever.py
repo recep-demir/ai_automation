@@ -86,7 +86,10 @@ def get_ai_support(query: str) -> Dict[str, Any]:
 
     except Exception as e:
         logging.error(f"RAG Synthesis Error: {str(e)}")
-        return "System Error: I am unable to provide support at this moment."
+        return {
+            "answer": "System Error: I am unable to provide support at this moment.",
+            "sources": []
+        }
 
 if __name__ == "__main__":
     test_query = "What should I do if a brute force attack is detected?"
