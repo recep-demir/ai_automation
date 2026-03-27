@@ -1,5 +1,5 @@
 import json, os, re, logging
-from groq import Groq
+from groq import AsyncGroq
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -16,29 +16,34 @@ class SecurityLogAnalyzer:
             raise EnvironmentError("Missing configuration for GROQ_API_KEY or MODEL_NAME")
 
 
-        self.ai_client = Groq(api_key=api_key)
+        self.ai_client = AsyncGroq(api_key=api_key)
         self.model_name = model_name
 
         self.failed_attempts = {} 
         self.total_scanned = 0
         self.incidents_found = 0
 
+        self.LOG_PATTERN = re.compile(
+            r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - "
+            r"(?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - "
+            r"(?P<reason>.*)"
+        )
+
     async def process_single_batch(self, log_lines: list):
         """
         Processes logs and generates an 'AI-Enhanced Smart Report'.
         """
         current_alerts = []
-        LOG_PATTERN = re.compile(r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - (?P<reason>.*)")
 
         for line in log_lines:
-            self.total_scanned +=1
-            match = LOG_PATTERN.search(line)
+            self.total_scanned += 1
+            match = self.LOG_PATTERN.search(line)
 
             if match:
                 ip_match = match.group("ip")
-                timestamp_str = match.group("time").replace(".", "-")
+                raw_time = match.group("time").replace(".", "-")
                 reason = match.group("reason").strip()
-                current_log_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+                current_log_time = datetime.strptime(raw_time, "%Y-%m-%d %H:%M:%S")
 
                 if ip_match not in self.failed_attempts:
                     self.failed_attempts[ip_match] = []
@@ -50,20 +55,26 @@ class SecurityLogAnalyzer:
                     first_attempt_time = self.failed_attempts[ip_match][0][0]
                     time_diff = (current_log_time - first_attempt_time).total_seconds()
 
-
                     if time_diff < 60:
-                        error_detail = f"Brute Force attempt detected from IP: {ip_match}. Multiple failed login attempts in less than 60 seconds."
+                        error_detail = (
+                            f"Brute Force attempt detected from IP: {ip_match}. "
+                            f"Found {len(self.failed_attempts[ip_match])} failed attempts in {time_diff:.2f} seconds."
+                        )
 
+                        # KRİTİK DÜZELTME: get_ai_support artık async olduğu için 'await' kullanıyoruz.
+                        # Bu sayede AI cevap beklerken sistem kilitlenmez.
                         try:
-                            ai_response = get_ai_support(error_detail)
+                            ai_response = await get_ai_support(error_detail)
                             recommendation = ai_response.get("answer")
                             sources = ai_response.get("sources", [])
                         
                         except Exception as e:
+                            # Resilience: Senin fallback mantığın korundu
                             logging.error(f"RAG Module Failure: {e}")
-                            recommendation = "AI recommendation is currently unavailable. Please follow standard firewall blocking procedures."
+                            recommendation = "AI tavsiyesi şu an alınamıyor, ancak kural tabanlı analiz şudur: Bu IP adresini sistem politikalarına göre engelleyin."
                             sources = ["Fallback Logic"]
 
+                        # Senin istediğin JSON yapısı
                         current_alerts.append({
                             "status": "threat_detected",
                             "analysis": f"Brute Force attempt from {ip_match}",
@@ -72,10 +83,10 @@ class SecurityLogAnalyzer:
                         })
 
                         self.incidents_found += 1
-                        self.failed_attempts[ip_match] = []
+                        self.failed_attempts[ip_match] = [] # Başarılı tespitten sonra reset
                     
                     else:
+                        # Kayan pencere (Sliding window) mantığın korundu
                         self.failed_attempts[ip_match].pop(0)
-
 
         return current_alerts
