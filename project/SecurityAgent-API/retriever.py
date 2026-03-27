@@ -77,7 +77,7 @@ async def get_ai_support(query: str) -> Dict[str, Any]:
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": f"Issue: {query}"}
             ],
-            model="llama-3.1-8b-instant",
+            model=MODEL_NAME,
             temperature=0.1  
         )
 
@@ -88,17 +88,21 @@ async def get_ai_support(query: str) -> Dict[str, Any]:
 
     except Exception as e:
         logging.error(f"RAG Synthesis Error: {str(e)}")
-        return {
-            "answer": "System Error: I am unable to provide support at this moment.",
-            "sources": []
-        }
+        raise e
 
 if __name__ == "__main__":
-    test_query = "What should I do if a brute force attack is detected?"
-    print("\n--- AI SUPPORT RESPONSE ---")
 
-    result = asyncio.run(get_ai_support(test_query))
+    import asyncio
     
-    print(f"RESPONSE: {result['answer']}")
-    print("-" * 30)
-    print(f"SOURCES USED: {result['sources']}")
+    async def main_test():
+        test_query = "What should I do if a brute force attack is detected?"
+        print("\n--- AI SUPPORT RESPONSE (TEST) ---")
+        try:
+            result = await get_ai_support(test_query)
+            print(f"RESPONSE: {result['answer']}")
+            print("-" * 30)
+            print(f"SOURCES USED: {result['sources']}")
+        except Exception as e:
+            print(f"Test Failed: {e}")
+
+    asyncio.run(main_test())
