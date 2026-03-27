@@ -2,6 +2,8 @@ import json, os, re, logging
 from groq import Groq
 from datetime import datetime
 
+from retriever import get_ai_support
+
 class SecurityLogAnalyzer:
     def __init__(self):
         self.ai_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
