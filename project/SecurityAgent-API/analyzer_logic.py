@@ -1,14 +1,24 @@
 import json, os, re, logging
 from groq import Groq
 from datetime import datetime
+from dotenv import load_dotenv
 
 from retriever import get_ai_support
 
+load_dotenv()
 class SecurityLogAnalyzer:
     def __init__(self):
-        self.ai_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        self.model_name = "llama-3.1-8b-instant"
-        
+        api_key = os.getenv("GROQ_API_KEY")
+        model_name = os.getenv("MODEL_NAME")
+
+        if not api_key or not model_name:
+            logging.critical("Environment Variable Error: GROQ_API_KEY and MODEL_NAME must be set.")
+            raise EnvironmentError("Missing configuration for GROQ_API_KEY or MODEL_NAME")
+
+
+        self.ai_client = Groq(api_key=api_key)
+        self.model_name = model_name
+
         # State tracking (In-memory storage for brute force detection)
         self.failed_attempts = {} 
         self.total_scanned = 0
