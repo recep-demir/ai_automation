@@ -1,10 +1,11 @@
 import os
 import logging
 from typing import Any, List, Dict
-from groq import Groq
+from groq import AsyncGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from dotenv import load_dotenv
+from tenacity import asyncio
 
 
 load_dotenv()
@@ -15,6 +16,7 @@ logging.basicConfig(
 )
 
 PERSIST_DIRECTORY = "./chroma_db"
+MODEL_NAME = os.getenv("MODEL_NAME", "llama-3.1-8b-instant")
 
 def validate_environment():
     """
@@ -35,10 +37,10 @@ vectorstore_engine = Chroma(
     persist_directory=PERSIST_DIRECTORY,
     embedding_function=embeddings_model
 )
-groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+async_groq_client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY"))
 
 
-def get_ai_support(query: str) -> Dict[str, Any]:
+async def get_ai_support(query: str) -> Dict[str, Any]:
     
     try:
 
@@ -69,8 +71,8 @@ def get_ai_support(query: str) -> Dict[str, Any]:
             f"### CONTEXT FROM COMPANY POLICY:\n{retrieved_context}"
         )
 
-        logging.info("Generating response with Groq (Llama-3)...")
-        chat_completion = groq_client.chat.completions.create(
+        logging.info(f"Generating response with {MODEL_NAME}...")
+        chat_completion = await async_groq_client.chat.completions.create(
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": f"Issue: {query}"}
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     test_query = "What should I do if a brute force attack is detected?"
     print("\n--- AI SUPPORT RESPONSE ---")
 
-    result = get_ai_support(test_query)
+    result = asyncio.run(get_ai_support(test_query))
     
     print(f"RESPONSE: {result['answer']}")
     print("-" * 30)
