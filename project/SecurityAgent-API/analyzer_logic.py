@@ -19,7 +19,6 @@ class SecurityLogAnalyzer:
         self.ai_client = Groq(api_key=api_key)
         self.model_name = model_name
 
-        # State tracking (In-memory storage for brute force detection)
         self.failed_attempts = {} 
         self.total_scanned = 0
         self.incidents_found = 0
