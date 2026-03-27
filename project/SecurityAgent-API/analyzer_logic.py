@@ -23,39 +23,48 @@ class SecurityLogAnalyzer:
         self.total_scanned = 0
         self.incidents_found = 0
 
-    def block_ip_on_firewall(self, ip: str):
-        # Mocking a system command or API call to a firewall
-        logging.info(f"🛡️ [FIREWALL ACTION] IP {ip} blocked successfully.")
-        return f"IP {ip} restricted."
+    async def process_single_batch(self, log_lines: list):
+        """
+        Processes logs and generates an 'AI-Enhanced Smart Report'.
+        """
+        current_alerts = []
+        LOG_PATTERN = re.compile(r"(?P<time>\d{4}[-.]\d{2}[-.]\d{2} \d{2}:\d{2}:\d{2}) - (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - ERROR - (?P<reason>.*)")
 
-    async def analyze_with_ai(self, ip: str, log_data: str):
-        """
-        Sends potential threat logs to AI for final decision.
-        """
-        tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": "block_ip_on_firewall",
-                    "description": "Blocks an IP address if brute force activity is detected.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "ip": {"type": "string", "description": "The IP to block"}
-                        },
-                        "required": ["ip"]
-                    }
-                }
-            }
-        ]
-        
-        system_prompt = (
-        "You are a strict Security Automated System. Your ONLY task is to decide "
-        "if the logs indicate a brute force attack. If you detect an attack, "
-        "you MUST ONLY use the 'block_ip_on_firewall' tool. "
-        "DO NOT invent or attempt to call any other functions. "
-        "If no attack is detected, respond with 'NORMAL'."
-    )
+        for line in log_lines:
+            self.total_scanned +=1
+            match = LOG_PATTERN.search(line)
+
+            if match:
+                ip_match = match.group("ip")
+                timestamp_str = match.group("time").replace(".", "-")
+                reason = match.group("reason").strip()
+                current_log_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+
+                if ip_match not in self.failed_attempts:
+                    self.failed_attempts[ip_match] = []
+
+                self.failed_attempts[ip_match].append((current_log_time, reason))
+
+
+                if len(self.failed_attempts[ip_match]) >= 5:
+                    first_attempt_time = self.failed_attempts[ip_match][0][0]
+                    time_diff = (current_log_time - first_attempt_time).total_seconds()
+
+
+                    if time_diff < 60:
+                        error_detail = f"Brute Force attempt detected from IP: {ip_match}. Multiple failed login attempts in less than 60 seconds."
+
+                        try:
+                            ai_response = get_ai_support(error_detail)
+                            recommendation = ai_response.get("answer")
+                            sources = ai_response.get("sources", [])
+                        except Exception as e:
+                            logging.error(f"RAG Module Failure: {e}")
+                            recommendation = "AI recommendation is currently unavailable. Please follow standard firewall blocking procedures."
+                            sources = ["Fallback Logic"]
+
+
+
         
         try:
             # Groq Python client is typically sync, but we treat it as part of our async flow
