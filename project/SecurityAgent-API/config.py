@@ -15,6 +15,11 @@ class Config:
     # Logging
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
-
+    @classmethod
+    def validate(cls):
+        required = ["GROQ_API_KEY", "EMBEDDING_MODEL"]
+        for var in required:
+            if not getattr(cls, var):
+                raise EnvironmentError(f"CRITICAL: {var} is not set in .env file!")
 
 Config.validate()
