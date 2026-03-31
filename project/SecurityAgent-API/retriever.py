@@ -49,30 +49,28 @@ class AI_Retriever:
                 }
 
             retrieved_context = ""
-            sources = set() # Use a set to avoid duplicate source names
+            sources = set()
 
             for doc in search_results:
                 retrieved_context += f"{doc.page_content}\n---\n"
-                source_file = doc.metadata.get("source", "Unknown Source")
-                sources.add(os.path.basename(source_file))
+                source_path = doc.metadata.get("source", "Unknown")
+                sources.add(os.path.basename(source_path))
 
             system_message = (
-                "You are a Senior IT Support Specialist. "
-                "Use ONLY the following context to answer the user's question. "
-                "If the answer is not in the context, say that you don't know based on company policy. "
-                "Do not make up facts or use external knowledge. "
-                "Keep your tone professional and technical.\n\n"
-                f"### CONTEXT FROM COMPANY POLICY:\n{retrieved_context}"
+                "You are a Senior IT Security Specialist. "
+                "Answer using ONLY the provided context. If not found, say you don't know based on policy. "
+                "Maintain a professional tone.\n\n"
+                f"### CONTEXT:\n{retrieved_context}"
             )
 
-            logging.info(f"Generating response with {self.model_name}...")
+            logging.info(f"Requesting AI analysis from {self.model_name}...")
             chat_completion = await self.async_groq_client.chat.completions.create(
                 messages=[
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": f"Issue: {query}"}
                 ],
-                model=MODEL_NAME,
-                temperature=0.1  
+                model=self.model_name,
+                temperature=0.1
             )
 
             return {
@@ -81,22 +79,34 @@ class AI_Retriever:
             }
 
         except Exception as e:
-            logging.error(f"RAG Synthesis Error: {str(e)}")
+            logging.error(f"Error in AI Support Retrieval: {str(e)}")
             raise e
 
-if __name__ == "__main__":
+retriever_agent = AI_Retriever()
 
+async def get_ai_support(query: str):
+    """
+    Global access point for getting AI support.
+    """
+    return await retriever_agent.get_ai_support(query)
+
+# --- LOCAL TESTING BLOCK ---
+if __name__ == "__main__":
     import asyncio
     
     async def main_test():
         test_query = "What should I do if a brute force attack is detected?"
-        print("\n--- AI SUPPORT RESPONSE (TEST) ---")
+        print("\n" + "="*50)
+        print("STARTING AI SUPPORT TEST (ASYNCHRONOUS)")
+        print("="*50)
+        
         try:
             result = await get_ai_support(test_query)
-            print(f"RESPONSE: {result['answer']}")
-            print("-" * 30)
-            print(f"SOURCES USED: {result['sources']}")
+            print(f"\nAI RECOMMENDATION:\n{result['answer']}")
+            print("\nSOURCES USED:", result['sources'])
+            print("="*50)
         except Exception as e:
-            print(f"Test Failed: {e}")
+            print(f"\n[!] TEST FAILED: {str(e)}")
 
+    # Run the async test environment
     asyncio.run(main_test())
