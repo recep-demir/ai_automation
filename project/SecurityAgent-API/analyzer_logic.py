@@ -51,24 +51,23 @@ class SecurityLogAnalyzer:
                         
                         # Trigger RAG for recommendation
                         query_for_rag = f"Brute force attempt detected from {ip_match}. Reason: {reason}"
-                        
-                        try:
-                            ai_response = await get_ai_support(error_detail)
-                            recommendation = ai_response.get("answer")
-                            sources = ai_response.get("sources", [])
-                        
-                        except Exception as e:
-                            # Resilience: Senin fallback mantığın korundu
-                            logging.error(f"RAG Module Failure: {e}")
-                            recommendation = "AI tavsiyesi şu an alınamıyor, ancak kural tabanlı analiz şudur: Bu IP adresini sistem politikalarına göre engelleyin."
-                            sources = ["Fallback Logic"]
 
-                        # Senin istediğin JSON yapısı
+                        try:
+                            # Await the async RAG support
+                            ai_data = await get_ai_support(query_for_rag)
+                            recommendation = ai_data.get("answer")
+                            sources = ai_data.get("sources", [])
+                        except Exception as e:
+                            logging.error(f"AI Support Error: {e}")
+                            recommendation = "Manual intervention required. AI recommendation unavailable."
+                            sources = []
+
                         current_alerts.append({
-                            "status": "threat_detected",
-                            "analysis": f"Brute Force attempt from {ip_match}",
+                            "ip": ip_match,
+                            "status": "CRITICAL",
+                            "analysis": "Brute force attack signature matched.",
                             "ai_recommendation": recommendation,
-                            "sources": sources
+                            "policy_sources": sources
                         })
 
                         self.incidents_found += 1
