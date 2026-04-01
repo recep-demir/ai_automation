@@ -53,7 +53,7 @@ class AI_Retriever:
 
             for doc in search_results:
                 retrieved_context += f"{doc.page_content}\n---\n"
-                source_path = doc.metadata.get("source", "Unknown")
+                source_path = doc.metadata.get("source", "Unknown") 
                 sources.add(os.path.basename(source_path))
 
             system_message = (
