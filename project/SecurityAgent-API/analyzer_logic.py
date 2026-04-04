@@ -32,9 +32,9 @@ class SecurityLogAnalyzer:
 
             if match:
                 ip_match = match.group("ip")
-                raw_time = match.group("time").replace(".", "-")
+                timestamp_str = match.group("time").replace(".", "-")
                 reason = match.group("reason").strip()
-                current_log_time = datetime.strptime(raw_time, "%Y-%m-%d %H:%M:%S")
+                current_log_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
 
                 if ip_match not in self.failed_attempts:
                     self.failed_attempts[ip_match] = []
