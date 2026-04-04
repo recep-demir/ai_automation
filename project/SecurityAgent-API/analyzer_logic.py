@@ -49,11 +49,9 @@ class SecurityLogAnalyzer:
                     if time_diff < 60:
                         logging.warning(f"🚨 [ALERT] Brute force detected from IP: {ip_match}")
                         
-                        # Trigger RAG for recommendation
                         query_for_rag = f"Brute force attempt detected from {ip_match}. Reason: {reason}"
 
                         try:
-                            # Await the async RAG support
                             ai_data = await get_ai_support(query_for_rag)
                             recommendation = ai_data.get("answer")
                             sources = ai_data.get("sources", [])
@@ -71,10 +69,10 @@ class SecurityLogAnalyzer:
                         })
 
                         self.incidents_found += 1
-                        self.failed_attempts[ip_match] = [] # Başarılı tespitten sonra reset
+                        self.failed_attempts[ip_match] = [] 
                     
                     else:
-                        # Kayan pencere (Sliding window) mantığın korundu
+                        
                         self.failed_attempts[ip_match].pop(0)
 
         return current_alerts
