@@ -33,7 +33,6 @@ def generate_dataset():
 
     random.shuffle(dataset)
 
-    # 3. Write to CSV
     with open(FILENAME, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(["log_line", "label"]) # Header
