@@ -47,9 +47,25 @@ class SecurityEvaluator:
             if is_alert_generated:
                 if ground_truth == 1:
                     self.tp += 1
-                    logging.info(f"Line {index}: CORRECT - True Positive (Saldırı yakalandı)")
+                    logging.info(f"Line {index}: CORRECT - True Positive (Attack detected)")
                 else:
                     self.fp += 1
-                    logging.warning(f"Line {index}: FALSE POSITIVE - Yanlış alarm verildi!")
+                    logging.warning(f"Line {index}: FALSE POSITIVE - False positive alert generated!")
 
         self.report_results()
+
+    def report_results(self):
+        avg_latency = (self.total_time / self.total_logs) * 1000
+
+        logging.info("=" * 40)
+        logging.info("FINAL PERFORMANCE REPORT")
+        logging.info("-" * 40)
+        logging.info(f"Total Logs Processed : {self.total_logs}")
+        logging.info(f"True Positives (TP)  : {self.tp}")
+        logging.info(f"False Positives (FP) : {self.fp}")
+        logging.info(f"Avg Latency Per Log  : {avg_latency:.2f} ms")
+        logging.info("=" * 40)
+
+if __name__ == "__main__":
+    evaluator = SecurityEvaluator("test_logs.csv")
+    asyncio.run(evaluator.run_evaluation())
