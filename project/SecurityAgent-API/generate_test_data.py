@@ -1,7 +1,7 @@
 import csv
 import random
 
-FILENAME = "test_logs.csv"
+FILENAME = "../SecurityAgent-API/test_logs.csv"
 
 normal_logs = [
     " - 192.168.1.10 - ERROR - Database connection timeout",
