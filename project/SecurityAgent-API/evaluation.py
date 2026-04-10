@@ -24,7 +24,7 @@ class SecurityEvaluator:
         self.total_logs = 0
 
     async def run_evaluation(self):
-        logging.info("🚀 Optimized Evaluation Pipeline starting...")
+        logging.info("Optimized Evaluation Pipeline starting...")
 
         try:
             df = pd.read_csv(self.csv_path)
@@ -42,12 +42,12 @@ class SecurityEvaluator:
         log_batch = df['log_line'].tolist()
 
         start_time = time.perf_counter()
-        detected_alerts = await self.analyzer.process_single_batch(log_batch)
+        detected_alerts = await self.analyzer.process_single_batch(log_batch)        
         end_time = time.perf_counter()
 
         duration_ms = (end_time - start_time) * 1000
 
-        detected_ips = {alert['analysis'].split()[-1] for alert in detected_alerts} 
+        detected_ips = {alert.get("ip") for alert in detected_alerts if alert.get("ip")}
 
         self.tp = len(self.actual_attack_ips.intersection(detected_ips))
         self.fp = len(detected_ips - self.actual_attack_ips)
