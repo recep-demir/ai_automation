@@ -1,5 +1,22 @@
+# Local virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
 __pycache__/
-.env
-.git
-.pytest_cache/
 *.pyc
+*.pyo
+*.pyd
+
+# Local Database & Secrets (We will handle these via volumes and env_files)
+chroma_db/
+.env
+
+# Logs
+*.log
+ingestion.log
+
+# Git
+.git
+.gitignore
