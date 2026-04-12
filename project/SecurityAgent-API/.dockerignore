@@ -3,11 +3,13 @@ venv/
 .venv/
 env/
 
+
 # Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.py[cod]
 
 # Local Database & Secrets (We will handle these via volumes and env_files)
 chroma_db/
@@ -20,3 +22,10 @@ ingestion.log
 # Git
 .git
 .gitignore
+
+# Ignore local data and models (Most important for size)
+models_cache/
+chroma_db/
+
+# Ignore OS specific files
+.DS_Store
