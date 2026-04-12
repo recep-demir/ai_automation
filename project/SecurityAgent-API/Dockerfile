@@ -1,30 +1,54 @@
-# Step 1: Use a lightweight Python base image
-FROM python:3.12-slim
+# --- STAGE 1: Builder ---
+FROM python:3.12-slim AS builder
 
-# Step 2: Set environment variables to optimize Python inside the container
-# Prevents Python from writing .pyc files and ensures logs are sent to terminal directly
+# Set build-time environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Step 3: Set the working directory inside the container
 WORKDIR /app
 
-# Step 4: Install system dependencies (if needed for some python packages)
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Step 5: Copy only requirements first to leverage Docker cache
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Step 1: Install ONLY the CPU version of Torch (Huge space saver)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Step 2: Install other requirements
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Step 6: Install Python dependencies
-RUN pip install --no-cache-dir --default-timeout=1000 -r requirements.txt
+# --- STAGE 2: Runner ---
+FROM python:3.12-slim AS runner
 
-# Step 7: Copy the rest of the application code
+WORKDIR /app
+
+# Install runtime dependencies (libgomp1 is required for many AI libraries)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy only the installed packages from builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code (Only small .py files, thanks to .dockerignore)
 COPY . .
 
-# Step 8: Expose the port FastAPI runs on
+# Set Environment Variables for AI Models
+ENV HF_HOME=/app/models_cache
+ENV PYTHONUNBUFFERED=1
+
+# Security: Run as non-root user [cite: 28]
+RUN useradd -m appuser && chown -R appuser /app
+USER appuser
+
 EXPOSE 8000
 
-# Step 9: Command to run the application using Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
