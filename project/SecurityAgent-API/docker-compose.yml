@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ai-security-guard:
     build: .
@@ -12,3 +10,5 @@ services:
       - ./chroma_db:/app/chroma_db
       - ./models_cache:/app/models_cache  # Model buraya inecek, imajın içinde kalmayacak!
     restart: always
+
+    
