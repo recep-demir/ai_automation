@@ -1,4 +1,3 @@
-# requirements.txt
 fastapi
 uvicorn
 python-dotenv
@@ -9,6 +8,3 @@ langchain-community
 langchain-chroma
 langchain-huggingface
 sentence-transformers
-# CPU versiyonu için spesifik torch kurulumu (Opsiyonel ama önerilir)
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
