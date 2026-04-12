@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  ai-security-guard:
+    build: .
+    container_name: ai_security_container
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # PERSISTENCE: This links your local 'chroma_db' folder to the container's folder.
+      # Even if the container is deleted, your Vector DB data remains safe on your host machine.
+      - ./chroma_db:/app/chroma_db
+    restart: always
