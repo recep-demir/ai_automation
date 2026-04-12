@@ -100,12 +100,12 @@ class SecurityEvaluator:
         logging.info(f"Total Network Latency      : {duration_ms:.2f} ms")
         logging.info(f"Throughput                 : {throughput:.2f} logs/sec")
         logging.info("-" * 50)
-        logging.info(f"True Positives (TP)        : {self.tp} (Doğru Teşhis)")
-        logging.info(f"False Positives (FP)       : {self.fp} (Yanlış Alarm)")
-        logging.info(f"False Negatives (FN)       : {self.fn} (Kaçırılan Tehdit)")
+        logging.info(f"True Positives (TP)        : {self.tp} (Correct Diagnosis)")
+        logging.info(f"False Positives (FP)       : {self.fp} (Incorrect Alert)")
+        logging.info(f"False Negatives (FN)       : {self.fn} (Missed Threat)")
         logging.info("-" * 50)
-        logging.info(f"RECALL (Duyarlılık)        : %{recall:.2f}")
-        logging.info(f"PRECISION (Kesinlik)       : %{precision:.2f}")
+        logging.info(f"RECALL (Sensitivity)       : {recall:.2f}%")
+        logging.info(f"PRECISION (Specificity)    : {precision:.2f}%")
         logging.info("=" * 50)
 
 if __name__ == "__main__":
