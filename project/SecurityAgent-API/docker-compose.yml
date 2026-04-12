@@ -9,7 +9,6 @@ services:
     env_file:
       - .env
     volumes:
-      # PERSISTENCE: This links your local 'chroma_db' folder to the container's folder.
-      # Even if the container is deleted, your Vector DB data remains safe on your host machine.
       - ./chroma_db:/app/chroma_db
+      - ./models_cache:/app/models_cache  # Model buraya inecek, imajın içinde kalmayacak!
     restart: always
