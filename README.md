@@ -92,12 +92,10 @@ curl -X POST "[http://127.0.0.1:8000/analyze](http://127.0.0.1:8000/analyze)" \
 }
 ```
 
-## 🛤️ Roadmap
+## Roadmap
 - [x] Migrate from synchronous monolith to Async FastAPI microservice.
 - [x] Implement local RAG architecture for policy-based decision-making.
 - [x] Establish evaluation metrics (Precision/Recall script).
 - [x] Containerize with Docker & Docker Compose.
 - [ ] **Current Focus:** Implement GitHub Actions for CI/CD pipeline and automated Pytest execution.
 ```
-
----
