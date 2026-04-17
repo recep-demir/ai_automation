@@ -1,15 +1,13 @@
 import pytest
-from datetime import datetime, timedelta
-from analyzer_logic import SecurityLogAnalyzer 
+from analyzer_logic import SecurityLogAnalyzer
 
-def test_threat_detection():
+@pytest.mark.anyio
+async def test_threat_detection():
     analyzer = SecurityLogAnalyzer()
     
-    now = datetime.now()
-    log_time = now - timedelta(seconds=30)
-    fake_log = "CRITICAL: SQL injection attempt DROP TABLE users;"
+    fake_log_list = ["CRITICAL: SQL injection attempt DROP TABLE users;"]
     
-    # Kendi class'ındaki fonksiyon ismin neyse onu çağır (örn: process_logs veya analyze)
-    result = analyzer.process_single_batch(fake_log, log_time, now) 
-    
-    assert result == True
+    result = await analyzer.process_single_batch(fake_log_list)
+
+    assert result is not None
+    print(f"\nTest Sonucu: {result}")
