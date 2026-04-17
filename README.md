@@ -7,7 +7,7 @@
 
 > **An autonomous, AI-powered Site Reliability (SRE) and Security microservice that detects anomalies, consults internal company policies via RAG, and executes self-healing remediation steps.**
 
-## 📌 Business Value (Why this exists?)
+## Business Value (Why this exists?)
 Modern IT Operations Centers (SOC/NOC) suffer from **Alert Fatigue**. Engineers waste hours verifying false positives or searching through massive IT manuals to find the correct remediation protocol for a specific threat. 
 
 This project solves this by introducing a hybrid architecture:
@@ -15,19 +15,19 @@ This project solves this by introducing a hybrid architecture:
 2. **Context-Aware AI (Evidence-Based):** Instead of relying on an LLM's generic knowledge (which can hallucinate), the system uses **Retrieval-Augmented Generation (RAG)**. It searches the company's local, private IT operating procedures (Vector DB) and generates an action plan *strictly* based on internal compliance rules.
 3. **Self-Healing:** Maps the AI's structured decision directly to actionable triggers (e.g., updating firewall rules dynamically).
 
-## 🏗️ System Architecture
+## System Architecture
 
 The system operates strictly on a **"Separation of Concerns"** principle:
 * **Log Analyzer Engine:** Filters noise, tracks time-windows (sliding window for rate limits), and triggers alerts with **100% Recall**.
 * **Knowledge Ingestion (`ChromaDB`):** Converts company SOPs (Standard Operating Procedures) into vectorized chunks using HuggingFace sentence transformers, kept locally for **Data Sovereignty**.
 * **AI Synthesis (`Groq / Llama-3`):** Combines the detected threat with the retrieved company policy to return a structured JSON action plan.
 
-## 🚀 Key Features
+## Key Features
 * **Zero-Hallucination Guardrails:** AI responses include exact source tracking (`policy_sources`). If the answer isn't in the manual, the AI triggers a predefined fallback rather than guessing.
 * **Asynchronous I/O:** Built with `FastAPI` and `Asyncio` to ensure LLM network calls never block the main log processing event loop.
 * **Production-Ready Containerization:** Multi-stage Docker builds reduce image size while running under non-root user privileges for strict security compliance.
 
-## 📊 Performance & Evaluation Metrics
+## Performance & Evaluation Metrics
 The system is continuously evaluated against a gold-standard dataset using a custom `pandas`-based evaluation pipeline. Current benchmarks:
 
 | Metric | Score / Value | Note |
@@ -37,14 +37,14 @@ The system is continuously evaluated against a gold-standard dataset using a cus
 | **Precision** | `~90%` | Highly filtered keyword analysis reduces false positives. |
 | **Latency** | `< 40ms` | Average processing time per log entry. |
 
-## 🛠️ Tech Stack
+## Tech Stack
 * **Backend:** Python 3.12, FastAPI, Pydantic, Asyncio
 * **AI / Machine Learning:** LangChain, HuggingFace (`all-MiniLM-L6-v2`), Groq API (Llama-3.1-8B)
 * **Vector Database:** ChromaDB (Local Persistence)
 * **Infrastructure & DevOps:** Docker, Docker Compose
 * **Data & Testing:** Pandas, Pytest *(CI/CD integration pending)*
 
-## ⚙️ Quick Start (Docker)
+## Quick Start (Docker)
 
 The application is fully containerized and independent of the host OS.
 
