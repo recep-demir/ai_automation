@@ -21,7 +21,7 @@ The system operates strictly on a **"Separation of Concerns"** principle. Below 
 
 ```mermaid
 graph TD
-    %% 1. Stilleri Tanımla (Class Definitions)
+    %% 1.Class Definitions
     classDef input fill:#e1bee7,stroke:#8e24aa,stroke-width:2px;
     classDef gateway fill:#bbdefb,stroke:#1e88e5,stroke-width:2px;
     classDef filter fill:#ffcc80,stroke:#fb8c00,stroke-width:2px;
@@ -29,8 +29,8 @@ graph TD
     classDef ai fill:#ffab91,stroke:#e53935,stroke-width:2px;
     classDef output fill:#b2dfdb,stroke:#00897b,stroke-width:2px;
 
-    %% 2. Düğümleri Tanımla (Node Definitions)
-    A([Girdi / Input: Log Streams])
+    %% 2. Node Definitions
+    A([Input: Log Streams])
     B(FastAPI Gateway)
     C{Regex Analyzer}
     D[(ChromaDB: Local IT Policy)]
@@ -38,7 +38,7 @@ graph TD
     F[/Output: AI-Enhanced Security Alert JSON/]
     Z[Discard]
 
-    %% 3. Bağlantıları Kur (Links)
+    %% 3. Links
     A -->|1. Async Request| B
     B -->|2. Raw Logs| C
     C -- "Noise / Safe" --> Z
@@ -47,7 +47,7 @@ graph TD
     C -->|4. Sends Threat Data| E
     E -->|5. Synthesis & Decision| F
 
-    %% 4. Stilleri Uygula (Applying Classes)
+    %% 4. Applying Classes
     class A input;
     class B gateway;
     class C filter;
