@@ -17,7 +17,30 @@ This project solves this by introducing a hybrid architecture:
 
 ## System Architecture
 
-The system operates strictly on a **"Separation of Concerns"** principle:
+The system operates strictly on a **"Separation of Concerns"** principle. Below is the data flow topology of the microservice:
+
+```mermaid
+graph TD
+    %% Bileşenler ve Renklendirme
+    classDef input fill:#e1bee7,stroke:#8e24aa,stroke-width:2px;
+    classDef gateway fill:#bbdefb,stroke:#1e88e5,stroke-width:2px;
+    classDef filter fill:#ffcc80,stroke:#fb8c00,stroke-width:2px;
+    classDef db fill:#c8e6c9,stroke:#43a047,stroke-width:2px;
+    classDef ai fill:#ffab91,stroke:#e53935,stroke-width:2px;
+    classDef output fill:#b2dfdb,stroke:#00897b,stroke-width:2px;
+
+    A([Girdi / Input: Log Streams]) ::: input -->|1. Async Request| B(FastAPI Gateway) ::: gateway
+    B -->|2. Raw Logs| C{Regex Analyzer} ::: filter
+    
+    C -- "Noise / Safe" --> Z[Discard]
+    C -- "Threat Detected (60s Window)" --> D[(ChromaDB: Local IT Policy)] ::: db
+    
+    D -.->|3. Retrieves Context| E((Groq API / Llama-3)) ::: ai
+    C -->|4. Sends Threat Data| E
+    
+    E -->|5. Synthesis & Decision| F[/Output: AI-Enhanced Security Alert JSON/] ::: output
+```
+
 * **Log Analyzer Engine:** Filters noise, tracks time-windows (sliding window for rate limits), and triggers alerts with **100% Recall**.
 * **Knowledge Ingestion (`ChromaDB`):** Converts company SOPs (Standard Operating Procedures) into vectorized chunks using HuggingFace sentence transformers, kept locally for **Data Sovereignty**.
 * **AI Synthesis (`Groq / Llama-3`):** Combines the detected threat with the retrieved company policy to return a structured JSON action plan.
@@ -42,7 +65,7 @@ The system is continuously evaluated against a gold-standard dataset using a cus
 * **AI / Machine Learning:** LangChain, HuggingFace (`all-MiniLM-L6-v2`), Groq API (Llama-3.1-8B)
 * **Vector Database:** ChromaDB (Local Persistence)
 * **Infrastructure & DevOps:** Docker, Docker Compose
-* **Data & Testing:** Pandas, Pytest *(CI/CD integration pending)*
+* **Data & Testing:** Pandas, Pytest (Integrated via GitHub Actions CI/CD)
 
 ## Quick Start (Docker)
 
@@ -97,4 +120,5 @@ curl -X POST "[http://127.0.0.1:8000/analyze](http://127.0.0.1:8000/analyze)" \
 - [x] Implement local RAG architecture for policy-based decision-making.
 - [x] Establish evaluation metrics (Precision/Recall script).
 - [x] Containerize with Docker & Docker Compose.
-- [ ] **Current Focus:** Implement GitHub Actions for CI/CD pipeline and automated Pytest execution.
+- [x] Implement GitHub Actions for CI pipeline and automated Pytest execution.
+- [x] Continuous Delivery (CD) integration with Docker Hub.
