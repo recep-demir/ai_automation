@@ -30,10 +30,19 @@ jobs:
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }} 
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-
         run: |
           python3 -m pytest tests/ -s
 
-      - name: Build Docker Image
+      - name: Log in to Docker Hub
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker build -t security-agent-api:latest .
+          echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - name: Build and Push Docker Image
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker build -t "$DOCKER_USER/security-agent-api:latest" .
+          docker push "$DOCKER_USER/security-agent-api:latest"
