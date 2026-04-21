@@ -88,7 +88,7 @@ The application is fully containerized and independent of the host OS.
 
 **1. Clone and Configure:**
 ```bash
-git clone [https://github.com/recep-demir/ai_automation.git](https://github.com/recep-demir/ai_automation.git)
+git clone https://github.com/recep-demir/ai_automation.git
 cd ai-self-healing-system
 cp .env.example .env
 # Add your GROQ_API_KEY to the .env file
