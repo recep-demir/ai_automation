@@ -21,7 +21,7 @@ The system operates strictly on a **"Separation of Concerns"** principle. Below 
 
 ```mermaid
 graph TD
-    %% Bileşenler ve Renklendirme
+    %% 1. Stilleri Tanımla (Class Definitions)
     classDef input fill:#e1bee7,stroke:#8e24aa,stroke-width:2px;
     classDef gateway fill:#bbdefb,stroke:#1e88e5,stroke-width:2px;
     classDef filter fill:#ffcc80,stroke:#fb8c00,stroke-width:2px;
@@ -29,16 +29,31 @@ graph TD
     classDef ai fill:#ffab91,stroke:#e53935,stroke-width:2px;
     classDef output fill:#b2dfdb,stroke:#00897b,stroke-width:2px;
 
-    A([Girdi / Input: Log Streams]) ::: input -->|1. Async Request| B(FastAPI Gateway) ::: gateway
-    B -->|2. Raw Logs| C{Regex Analyzer} ::: filter
-    
-    C -- "Noise / Safe" --> Z[Discard]
-    C -- "Threat Detected (60s Window)" --> D[(ChromaDB: Local IT Policy)] ::: db
-    
-    D -.->|3. Retrieves Context| E((Groq API / Llama-3)) ::: ai
+    %% 2. Düğümleri Tanımla (Node Definitions)
+    A([Girdi / Input: Log Streams])
+    B(FastAPI Gateway)
+    C{Regex Analyzer}
+    D[(ChromaDB: Local IT Policy)]
+    E((Groq API / Llama-3))
+    F[/Output: AI-Enhanced Security Alert JSON/]
+    Z[Discard]
+
+    %% 3. Bağlantıları Kur (Links)
+    A -->|1. Async Request| B
+    B -->|2. Raw Logs| C
+    C -- "Noise / Safe" --> Z
+    C -- "Threat Detected" --> D
+    D -.->|3. Retrieves Context| E
     C -->|4. Sends Threat Data| E
-    
-    E -->|5. Synthesis & Decision| F[/Output: AI-Enhanced Security Alert JSON/] ::: output
+    E -->|5. Synthesis & Decision| F
+
+    %% 4. Stilleri Uygula (Applying Classes)
+    class A input;
+    class B gateway;
+    class C filter;
+    class D db;
+    class E ai;
+    class F output;
 ```
 
 * **Log Analyzer Engine:** Filters noise, tracks time-windows (sliding window for rate limits), and triggers alerts with **100% Recall**.
